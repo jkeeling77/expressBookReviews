@@ -23,7 +23,6 @@ public_users.get('/isbn/:isbn',function (req, res) {
    const isbn = req.params.isbn;
    let book;
    for(key in books) {
-      console.log("IN for loop, testing key["+key+"] == isbn["+isbn+"]");
       if(key == isbn) {
          book = books[key];
          break;
@@ -36,12 +35,31 @@ public_users.get('/isbn/:isbn',function (req, res) {
    else {
       res.send("Book with ISBN["+isbn+"] not found");
    }
- });
+});
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
+   const author = req.params.author;
+   const ISBNs = Object.keys(books);
+
+   let booksbyauthor = [];
+   ISBNs.forEach( (ISBN) => {
+      if(books[ISBN].author === author) {
+         booksbyauthor.push({"isbn":ISBN,
+                              "title":books[ISBN].title,
+                              "reviews":books[ISBN].reviews
+                            });
+      }
+   });
+
+   if( booksbyauthor ) {
+      res.send(JSON.stringify(booksbyauthor));
+   }
+   else {
+      res.send("Book with author["+author+"] not found");
+   }
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get all books based on title
