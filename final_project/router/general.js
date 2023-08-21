@@ -52,14 +52,12 @@ public_users.get('/author/:author',function (req, res) {
       }
    });
 
-   if( booksbyauthor ) {
-      res.send(JSON.stringify(booksbyauthor));
+   if( booksbyauthor.length > 0 ) {
+      res.send(booksbyauthor);
    }
    else {
-      res.send("Book with author["+author+"] not found");
+      res.send("Books by author["+author+"] not found");
    }
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 // Get all books based on title
@@ -80,17 +78,34 @@ public_users.get('/title/:title',function (req, res) {
    else {
       res.send("Book with title["+title+"] not found");
    }
-
-
-
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
+   const ISBN = req.params.isbn; 
+   console.log("IN: get(/review/:isbn, isbn["+ISBN+"]");
+   let reviews;
+   for(key in books) {
+      if(key == ISBN) {
+         console.log("key["+key+"] == ISBN["+ISBN+"]");
+         console.log("books[key].title:  " +books[key].title);
+         console.log("books[key].author: " +books[key].author);
+         console.log("books[key].reviews: " +books[key].reviews);
+         reviews = books[key].reviews;
+         console.log("Array.isArray(reviews):" + Array.isArray(reviews));
+         break;
+      }
+   }
+
+   if(reviews) {
+      res.send(JSON.stringify(reviews));
+   }
+   else {
+      res.send("Book Reviews for ISBN["+ISBN+"] not found");
+   }
+
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  //return res.status(300).json({message: "Yet to be implemented"});
 });
 
 module.exports.general = public_users;
