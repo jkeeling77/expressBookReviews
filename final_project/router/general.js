@@ -6,16 +6,33 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "/register endpoint: Yet to be implemented"});
+   console.log("IN:  POST /register");
+   const username = req.query.username;
+   const password = req.query.password;
+ 
+   if (username && password) {
+     if (isValid(username)) { 
+        users.push({"username":username,"password":password});
+        return res.status(200).json({message: "User["+username+"] successfully registred. Now you can login"});
+     }
+     else {
+        return res.status(404).json({message: "User["+username+"] already exists!"});    
+     }
+   }
+   else {
+      if(!username) {
+         return res.status(404).json({message: "Username not provided."});
+      }
+      else if(!password) {
+         return res.status(404).json({message: "Password not provided."});
+      }
+   }
+   return res.status(404).json({message: "Unable to register user."});
 });
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  //Write your code here
-  //return res.status(300).json({message: "/ endpoint: Yet to be implemented"});
   res.send(JSON.stringify({books},null,4));
-  
 });
 
 // Get book details based on ISBN
@@ -83,6 +100,7 @@ public_users.get('/title/:title',function (req, res) {
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
    const ISBN = req.params.isbn; 
+   /*
    console.log("IN: get(/review/:isbn, isbn["+ISBN+"]");
    let reviews;
    for(key in books) {
@@ -103,9 +121,13 @@ public_users.get('/review/:isbn',function (req, res) {
    else {
       res.send("Book Reviews for ISBN["+ISBN+"] not found");
    }
-
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
+   */
+   if(books[ISBN]){
+      res.send(books[ISBN]["reviews"]);
+   }
+   else {
+      res.send("Book with ISBN["+ISBN+"] not found");
+   }
 });
 
 module.exports.general = public_users;
