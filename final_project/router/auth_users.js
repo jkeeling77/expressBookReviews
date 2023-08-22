@@ -35,8 +35,6 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  //Write your code here
-  //return res.status(300).json({message: "Yet to be implemented"});
   console.log("IN:  POST /login");
   const username = req.query.username;
   const password = req.query.password;
@@ -64,13 +62,21 @@ regd_users.post("/login", (req,res) => {
 regd_users.put("/auth/review/:isbn", (req, res) => {
   console.log("IN:  PUT /auth/review/:isbn");
   const ISBN = req.params.isbn;
+  const session_username = req.session.username;
+  console.log("  session_username["+session_username+"]");
+
   let filtered_book = books[ISBN];
   if(filtered_book) {
     let review = req.query.review;
     let reviewer = req.session.authorization['username'];
+    console.log("  review["+review+"], reviewer["+reviewer+"]");
     if(review) {
-      filtered_book['review'][reviewer] = review;
-      books[ISBN] = filtered_book;
+        filtered_book['reviews'][reviewer] = review;
+        books[ISBN] = filtered_book;
+        res.send("Book review added/updated");
+    }
+    else {
+      res.send("Unable to update or add review: no review provided");
     }
   }
   else {
