@@ -86,6 +86,8 @@ public_users.get('/author/:author',function (req, res) {
 */
 
 // Get all books based on title
+// replaced by task 13
+/*
 public_users.get('/title/:title',function (req, res) {
    const title = req.params.title;
    const ISBNs = Object.keys(books);
@@ -104,6 +106,7 @@ public_users.get('/title/:title',function (req, res) {
       res.send("Book with title["+title+"] not found");
    }
 });
+*/
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
@@ -163,6 +166,25 @@ public_users.get('/isbn/:isbn', function(req,res) {
     res.send(JSON.stringify({booksbyauthor}, null, 4));
   });
  });
+
+// task 13
+public_users.get('/title/:title', function(req,res) {
+   console.log("IN:  GET /title/:title");
+   console.log("title[" +req.params.title+"]");
+   const get_title = new Promise((resolve, reject) => {
+     let bookswithtitle = [];
+     let ISBNs = Object.keys(books);
+ 
+     ISBNs.forEach((ISBN) => {
+       if(books[ISBN]["title"] === req.params.title) {
+          bookswithtitle.push({"isbn":ISBN,
+                              "author":books[ISBN]["author"],
+                              "reviews":books[ISBN]["reviews"]});
+       }
+     });
+     res.send(JSON.stringify({bookswithtitle}, null, 4));
+   });
+  });
 
 
 module.exports.general = public_users;
