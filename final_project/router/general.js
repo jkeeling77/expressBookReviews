@@ -148,6 +148,7 @@ public_users.get('/isbn/:isbn', function(req,res) {
  // task 12
  public_users.get('/author/:author', function(req,res) {
   console.log("IN:  GET /author/:author");
+  console.log("author[" +req.params.author+"]");
   const get_author = new Promise((resolve, reject) => {
     let booksbyauthor = [];
     let ISBNs = Object.keys(books);
