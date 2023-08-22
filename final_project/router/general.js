@@ -6,7 +6,7 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
-   console.log("IN:  POST /register");
+   //console.log("IN:  POST /register");
    const username = req.query.username;
    const password = req.query.password;
  
@@ -31,11 +31,15 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
+// Replaced by task 10
+/*
 public_users.get('/',function (req, res) {
   res.send(JSON.stringify({books},null,4));
 });
+*/
 
-// Get book details based on ISBN
+// Get book details based on ISBN, replaced by task 10
+/*
 public_users.get('/isbn/:isbn',function (req, res) {
    const isbn = req.params.isbn;
    let book;
@@ -53,8 +57,11 @@ public_users.get('/isbn/:isbn',function (req, res) {
       res.send("Book with ISBN["+isbn+"] not found");
    }
 });
-  
+*/
+
 // Get book details based on author
+// replaced by task 12
+/*
 public_users.get('/author/:author',function (req, res) {
    const author = req.params.author;
    const ISBNs = Object.keys(books);
@@ -76,6 +83,7 @@ public_users.get('/author/:author',function (req, res) {
       res.send("Books by author["+author+"] not found");
    }
 });
+*/
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
@@ -100,28 +108,6 @@ public_users.get('/title/:title',function (req, res) {
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
    const ISBN = req.params.isbn; 
-   /*
-   console.log("IN: get(/review/:isbn, isbn["+ISBN+"]");
-   let reviews;
-   for(key in books) {
-      if(key == ISBN) {
-         console.log("key["+key+"] == ISBN["+ISBN+"]");
-         console.log("books[key].title:  " +books[key].title);
-         console.log("books[key].author: " +books[key].author);
-         console.log("books[key].reviews: " +books[key].reviews);
-         reviews = books[key].reviews;
-         console.log("Array.isArray(reviews):" + Array.isArray(reviews));
-         break;
-      }
-   }
-
-   if(reviews) {
-      res.send(JSON.stringify(reviews));
-   }
-   else {
-      res.send("Book Reviews for ISBN["+ISBN+"] not found");
-   }
-   */
    if(books[ISBN]){
       res.send(books[ISBN]["reviews"]);
    }
@@ -129,5 +115,53 @@ public_users.get('/review/:isbn',function (req, res) {
       res.send("Book with ISBN["+ISBN+"] not found");
    }
 });
+
+// task 10
+public_users.get('/', function(req,res) {
+  const get_books = new Promise( (resolve, reject) => {
+    resolve(res.send(JSON.stringify({books}, null, 4)));
+    });
+});
+
+// task 11
+public_users.get('/isbn/:isbn', function(req,res) {
+  console.log("IN:  GET /isbn/:isbn");
+  const get_isbn = new Promise((resolve, reject) => {
+    ISBN = req.params.isbn;
+    let book;
+    for( key in books) {
+       if(key == ISBN) {
+          book = books[key];
+          break;
+       }
+    }
+    
+    if(book) {
+       res.send(JSON.stringify({book}, null, 4));
+    }
+    else {
+       res.send("Book with ISBN["+ISBN+"] not found");
+    }
+  });
+ });
+
+ // task 12
+ public_users.get('/author/:author', function(req,res) {
+  console.log("IN:  GET /author/:author");
+  const get_author = new Promise((resolve, reject) => {
+    let booksbyauthor = [];
+    let ISBNs = Object.keys(books);
+
+    ISBNs.forEach((ISBN) => {
+      if(books[ISBN]["author"] === req.params.author) {
+         booksbyauthor.push({"isbn":ISBN,
+                             "title":books[ISBN]["title"],
+                             "reviews":books[ISBN]["reviews"]});
+      }
+    });
+    res.send(JSON.stringify({booksbyauthor}, null, 4));
+  });
+ });
+
 
 module.exports.general = public_users;
